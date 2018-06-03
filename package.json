@@ -55,9 +55,9 @@
     "dhttp": "^2.3.5",
     "minimaldata": "^1.0.2",
     "mocha": "^3.1.0",
-    "nyc": "^10.2.0",
-    "proxyquire": "^1.4.0",
-    "sinon": "^1.12.2",
+    "nyc": "^10.3.2",
+    "proxyquire": "^1.8.0",
+    "sinon": "^1.17.7",
     "standard": "^9.0.2"
   },
   "license": "MIT"
