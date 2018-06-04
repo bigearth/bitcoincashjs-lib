@@ -474,7 +474,6 @@ function buildInput (input, allowIncomplete) {
 }
 
 function TransactionBuilder (network, maximumFeeRate) {
-  console.log('new tx builder yay!!!!')
   this.prevTxMap = {}
   this.network = network || networks.bitcoin
 
