@@ -22,7 +22,7 @@ function vectorSize (someVector) {
 }
 
 function Transaction () {
-  this.version = 1
+  this.version = 2
   this.locktime = 0
   this.ins = []
   this.outs = []

@@ -481,16 +481,8 @@ function TransactionBuilder (network, maximumFeeRate) {
   this.maximumFeeRate = maximumFeeRate || 2500
 
   this.inputs = []
-  this.bitcoinCash = false
+  this.bitcoinCash = true
   this.tx = new Transaction()
-}
-
-TransactionBuilder.prototype.enableBitcoinCash = function (enable) {
-  if (typeof enable === 'undefined') {
-    enable = true
-  }
-
-  this.bitcoinCash = enable
 }
 
 TransactionBuilder.prototype.setLockTime = function (locktime) {
@@ -506,13 +498,6 @@ TransactionBuilder.prototype.setLockTime = function (locktime) {
   }
 
   this.tx.locktime = locktime
-}
-
-TransactionBuilder.prototype.setVersion = function (version) {
-  typeforce(types.UInt32, version)
-
-  // XXX: this might eventually become more complex depending on what the versions represent
-  this.tx.version = version
 }
 
 TransactionBuilder.fromTransaction = function (transaction, network, bitcoinCashTx) {
@@ -687,8 +672,8 @@ function canSign (input) {
 }
 
 TransactionBuilder.prototype.sign = function (vin, keyPair, redeemScript, hashType, witnessValue, witnessScript) {
-  // TODO: remove keyPair.network matching in 4.0.0
-  // if (keyPair.network && keyPair.network.hashGenesisBlock !== this.network.hashGenesisBlock) throw new TypeError('Inconsistent network')
+  hashType = hashType | Transaction.SIGHASH_BITCOINCASHBIP143;
+
   if (!this.inputs[vin]) throw new Error('No input at index: ' + vin)
   hashType = hashType || Transaction.SIGHASH_ALL
 
@@ -714,16 +699,17 @@ TransactionBuilder.prototype.sign = function (vin, keyPair, redeemScript, hashTy
   }
 
   // ready to sign
-  var signatureHash
-  if (this.bitcoinCash) {
-    signatureHash = this.tx.hashForCashSignature(vin, input.signScript, witnessValue, hashType)
-  } else {
-    if (input.witness) {
-      signatureHash = this.tx.hashForWitnessV0(vin, input.signScript, witnessValue, hashType)
-    } else {
-      signatureHash = this.tx.hashForSignature(vin, input.signScript, hashType)
-    }
-  }
+  // var signatureHash = this.tx.hashForCashSignature(vin, input.signScript, witnessValue, hashType)
+  var signatureHash = this.tx.hashForCashSignature(vin, input.signScript, witnessValue, hashType);
+  // if (this.bitcoinCash) {
+  //   signatureHash = this.tx.hashForCashSignature(vin, input.signScript, witnessValue, hashType)
+  // } else {
+  //   if (input.witness) {
+  //     signatureHash = this.tx.hashForWitnessV0(vin, input.signScript, witnessValue, hashType)
+  //   } else {
+  //     signatureHash = this.tx.hashForSignature(vin, input.signScript, hashType)
+  //   }
+  // }
 
   // enforce in order signing of public keys
   var signed = input.pubKeys.some(function (pubKey, i) {
