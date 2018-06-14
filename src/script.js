@@ -102,7 +102,7 @@ function decompile (buffer) {
       i += d.size
 
       // attempt to read too much data? empty script
-      if (i + d.number > buffer.length) return []
+      // if (i + d.number > buffer.length) return []
 
       var data = buffer.slice(i, i + d.number)
       i += d.number
